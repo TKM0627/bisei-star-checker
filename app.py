@@ -10,7 +10,10 @@ URL = f"https://api.open-meteo.com/v1/forecast?latitude={LAT}&longitude={LON}&da
 @st.cache_data
 def get_weather_df():
     data = requests.get(URL).json()["daily"]
-    return pd.DataFrame({"date": pd.to_datetime(data["time"]).dt.date, "cloud": data["cloud_cover_mean"]})
+    return pd.DataFrame({
+    "date": pd.Series(pd.to_datetime(data["time"])).dt.date, 
+    "cloud": data["cloud_cover_mean"]
+})
 
 def get_moon_age(d):
     # 簡易月齢計算（誤差あり）
@@ -39,3 +42,5 @@ else: st.warning("条件が良くありません。別の日を検討しまし�
 
 st.subheader("前後1週間の雲量トレンド")
 st.line_chart(df.set_index("date"))
+
+
